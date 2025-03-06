@@ -2,41 +2,56 @@ import pyautogui
 import psutil
 import time
 from pynput import mouse
-
+from threading import Thread, Event
 
 def is_tibia_running():
-    for process in psutil.process_iter(['name']):
-        if process.info['name'] == 'Tibia.exe':
-            return True
-    return False
+    return any(process.info['name'].lower() == 'client.exe' for process in psutil.process_iter(['name']))
 
-def press_minus_key():
-    pyautogui.press('-')
+def press_key_while_pressed(key, event):
+    while not event.is_set():
+        if is_tibia_running():
+            pyautogui.press(key)
+        time.sleep(0.01)  
 
+def on_click(x, y, button, pressed, events):
+    if button == mouse.Button.x2:  # MB5
+        if pressed:
+            events['mb5'].clear()
+            Thread(target=press_key_while_pressed, args=('=', events['mb5']), daemon=True).start()
+        else:
+            events['mb5'].set()
+    elif button == mouse.Button.x1:  # MB4
+        if pressed:
+            events['mb4'].clear()
+            Thread(target=press_key_while_pressed, args=('-', events['mb4']), daemon=True).start()
+        else:
+            events['mb4'].set()
+    elif button == mouse.Button.middle:  # Clique do scroll
+        if pressed:
+            events['middle'].clear()
+            Thread(target=press_key_while_pressed, args=('k', events['middle']), daemon=True).start()
+        else:
+            events['middle'].set()
 
-def press_equal_key():
-    pyautogui.press('=')
+def main():
+    events = {
+        'mb5': Event(),
+        'mb4': Event(),
+        'middle': Event()
+    }
+    
+    listener = mouse.Listener(on_click=lambda x, y, button, pressed: on_click(x, y, button, pressed, events))
+    listener.start()
 
-def press_k_key():
-    pyautogui.press('k')
-
-def on_click(x, y, button, pressed):
-    if pressed:
-        if button == mouse.Button.button8:  # MB5
+    try:
+        while True:
             if is_tibia_running():
-                press_minus_key()
-        elif button == mouse.Button.button7:  # MB4
-            if is_tibia_running():
-                press_equal_key()
-        elif button == mouse.Button.middle:  # Clique do scroll
-            if is_tibia_running():
-                press_k_key()
+                time.sleep(1)
+            else:
+                listener.stop()
+                break
+    except KeyboardInterrupt:
+        listener.stop()
 
-listener = mouse.Listener(on_click=on_click)
-listener.start()
-
-try:
-    while True:
-        time.sleep(1)
-except KeyboardInterrupt:
-    listener.stop()
+if __name__ == "__main__":
+    main()
