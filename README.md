@@ -5,3 +5,10 @@ Criei o script quando tinha um mouse da redragon sem software propriamente, ele 
 # EXEMPLO COM WALL
 
 https://github.com/user-attachments/assets/c48bea03-5c98-47a6-994b-96f9c1a6b153
+
+
+# COMANDO PARA INSTALAR O SCRIPT
+
+pyinstaller --onefile --noconsole --clean --strip --icon="D:\Downloads\Tibia\Tibia.ico" Mouse.py
+
+* Coloque os arquivos em uma pasta chamada "Tibia" junto com os icones e execute o comando.
