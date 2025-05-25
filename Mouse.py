@@ -14,19 +14,19 @@ def press_key_while_pressed(key, event):
         time.sleep(0.001)  
 
 def on_click(x, y, button, pressed, events):
-    if button == mouse.Button.x2:  # MB5
+    if button == mouse.Button.x2: 
         if pressed:
             events['mb5'].clear()
             Thread(target=press_key_while_pressed, args=('=', events['mb5']), daemon=True).start()
         else:
             events['mb5'].set()
-    elif button == mouse.Button.x1:  # MB4
+    elif button == mouse.Button.x1: 
         if pressed:
             events['mb4'].clear()
             Thread(target=press_key_while_pressed, args=('-', events['mb4']), daemon=True).start()
         else:
             events['mb4'].set()
-    elif button == mouse.Button.middle:  # Clique do scroll
+    elif button == mouse.Button.middle:
         if pressed:
             events['middle'].clear()
             Thread(target=press_key_while_pressed, args=('k', events['middle']), daemon=True).start()
@@ -48,8 +48,7 @@ def main():
             if is_tibia_running():
                 time.sleep(1)
             else:
-                listener.stop()
-                break
+                time.sleep(1)
     except KeyboardInterrupt:
         listener.stop()
 
