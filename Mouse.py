@@ -11,7 +11,7 @@ def press_key_while_pressed(key, event):
     while not event.is_set():
         if is_tibia_running():
             pyautogui.press(key)
-        time.sleep(0.01)  
+        time.sleep(0.001)  
 
 def on_click(x, y, button, pressed, events):
     if button == mouse.Button.x2:  # MB5
